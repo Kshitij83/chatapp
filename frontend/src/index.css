@@ -38,3 +38,14 @@ body{
 		transform: translate3d(4px, 0, 0);
 	}
 }
+
+@media (max-width: 768px) {
+  body {
+    background-size: auto 100%;
+    background-position: top;
+  }
+
+  .shake {
+    animation-duration: 0.5s; /* Shorter shake duration on small screens */
+  }
+}

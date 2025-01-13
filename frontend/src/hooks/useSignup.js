@@ -76,7 +76,7 @@ function handleInputErrors({
   }
 
   if (password.length < 6) {
-    toast.error("Passwords do not match");
+    toast.error("Password should be minimum 6 characters");
     return false;
   }
 
