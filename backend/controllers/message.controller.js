@@ -2,10 +2,11 @@ import Conversation from "../models/conversation.model.js";
 import Message from "../models/message.model.js";
 import { getReceiverSocketId } from "../socket/socket.js";
 import { io } from "../socket/socket.js";
+import { uploadAudioToS3 } from "../utils/s3Upload.js"; // You need to create this file as in Connectify
 
 export const sendMessage = async (req, res) => {
   try {
-    const { message } = req.body;
+    const { message, messageType, fileName } = req.body;
     const { id: receiverId } = req.params;
     const senderId = req.user._id;
 
@@ -19,10 +20,26 @@ export const sendMessage = async (req, res) => {
       });
     }
 
+    let msgContent = message;
+    let msgType = messageType || "text";
+    let msgFileName = fileName;
+
+    // Handle audio upload to S3
+    if (msgType === "audio" && message.startsWith("data:audio")) {
+      msgContent = await uploadAudioToS3(
+        message,
+        fileName || `audio_${Date.now()}.webm`
+      );
+    }
+
+    // For images, you can store base64 directly or use S3 similarly if needed
+
     const newMessage = new Message({
       senderId,
       receiverId,
-      message,
+      message: msgContent,
+      messageType: msgType,
+      fileName: msgFileName,
     });
 
     if (newMessage) {
