@@ -49,8 +49,3 @@ function handleInputErrors({
 
   return true;
 }
-    return false;
-  }
-
-  return true;
-}
