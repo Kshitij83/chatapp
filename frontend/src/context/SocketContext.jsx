@@ -15,17 +15,10 @@ export const SocketContextProvider = ({ children }) => {
 
   useEffect(() => {
     if (authUser) {
-      const serverUrl = import.meta.env.VITE_SOCKET_URL || 
-        (import.meta.env.PROD 
-          ? "https://chatapp-backend.onrender.com" 
-          : "http://localhost:5000");
-        
-      const socket = io(serverUrl, {
+      const socket = io("https://justchatting-sdt6.onrender.com/", {
         query: {
           userId: authUser._id,
         },
-        transports: ['websocket', 'polling'],
-        withCredentials: true
       });
 
       setSocket(socket);
@@ -42,7 +35,6 @@ export const SocketContextProvider = ({ children }) => {
       }
     }
   }, [authUser]);
-  
   return (
     <SocketContext.Provider value={{ socket, onlineUsers }}>
       {children}

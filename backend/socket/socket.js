@@ -5,19 +5,11 @@ import express from "express";
 const app = express();
 
 const server = http.createServer(app);
-
 const io = new Server(server, {
   cors: {
-    origin:
-      process.env.NODE_ENV === "production"
-        ? [process.env.FRONTEND_URL, "https://your-frontend-app.onrender.com"]
-        : ["http://localhost:3000"],
+    origin: ["http://localhost:3000"],
     methods: ["GET", "POST"],
-    credentials: true,
   },
-  transports: ["websocket", "polling"],
-  pingTimeout: 60000,
-  pingInterval: 25000,
 });
 
 export const getReceiverSocketId = (receiverId) => {
