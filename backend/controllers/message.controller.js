@@ -2,13 +2,19 @@ import Conversation from "../models/conversation.model.js";
 import Message from "../models/message.model.js";
 import { getReceiverSocketId } from "../socket/socket.js";
 import { io } from "../socket/socket.js";
-import { uploadAudioToS3 } from "../utils/s3Upload.js"; // You need to create this file as in Connectify
+import { uploadAudioToS3 } from "../utils/s3Upload.js";
 
 export const sendMessage = async (req, res) => {
   try {
     const { message, messageType, fileName } = req.body;
     const { id: receiverId } = req.params;
     const senderId = req.user._id;
+
+    console.log("Sending message:", {
+      messageType,
+      fileName,
+      messageLength: message?.length,
+    });
 
     let conversation = await Conversation.findOne({
       participants: { $all: [senderId, receiverId] },
@@ -26,13 +32,18 @@ export const sendMessage = async (req, res) => {
 
     // Handle audio upload to S3
     if (msgType === "audio" && message.startsWith("data:audio")) {
-      msgContent = await uploadAudioToS3(
-        message,
-        fileName || `audio_${Date.now()}.webm`
-      );
+      try {
+        console.log("Uploading audio to S3...");
+        msgContent = await uploadAudioToS3(
+          message,
+          fileName || `audio_${Date.now()}.webm`
+        );
+        console.log("Audio uploaded successfully:", msgContent);
+      } catch (uploadError) {
+        console.error("Audio upload failed:", uploadError);
+        return res.status(500).json({ error: "Failed to upload audio file" });
+      }
     }
-
-    // For images, you can store base64 directly or use S3 similarly if needed
 
     const newMessage = new Message({
       senderId,
@@ -46,9 +57,6 @@ export const sendMessage = async (req, res) => {
       conversation.messages.push(newMessage._id);
     }
 
-    // await conversation.save();
-    // await newMessage.save();
-    //the above lines can be replaced with below line:
     await Promise.all([conversation.save(), newMessage.save()]);
 
     const receiverSocketId = getReceiverSocketId(receiverId);
