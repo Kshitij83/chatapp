@@ -9,22 +9,47 @@ const Sidebar = () => {
   const navigate = useNavigate();
   const { authUser } = useAuthContext();
 
+  const handleProfileButtonMouseEnter = (e) => {
+    e.currentTarget.style.backgroundColor = "#1a1f25"; // Darker shade for hover
+  };
+
+  const handleProfileButtonMouseLeave = (e) => {
+    e.currentTarget.style.backgroundColor = "#222831";
+  };
+
   return (
-    <div className="border-r border-slate-500 p-4 flex flex-col">
+    <div
+      className="p-4 flex flex-col w-64 lg:w-72 xl:w-80"
+      style={{
+        borderRight: "2px solid #00ADB5",
+        backgroundColor: "#393E46",
+      }}
+    >
       {/* Profile Button */}
       <button
-        className="flex items-center gap-2 mb-4 p-2 rounded bg-slate-600 hover:bg-slate-700 text-white font-semibold"
+        className="flex items-center gap-3 mb-6 p-4 rounded-lg font-semibold transition-colors btn-animated"
+        style={{
+          backgroundColor: "#222831",
+          color: "#EEEEEE",
+          border: "4px solid #00ADB5",
+        }}
         onClick={() => navigate("/profile")}
+        onMouseEnter={handleProfileButtonMouseEnter}
+        onMouseLeave={handleProfileButtonMouseLeave}
       >
         <img
           src={authUser.profilePic}
           alt="profile"
-          className="w-8 h-8 rounded-full"
+          className="w-10 h-10 rounded-full"
+          style={{ border: "3px solid #00ADB5" }}
         />
-        <span>Profile</span>
+        <span style={{ color: "#00ADB5" }}>Profile</span>
       </button>
       <SearchInput />
-      <div className="divider px-3"></div>
+      <div
+        className="divider px-3"
+        style={{ borderColor: "#00ADB5" }}
+      ></div>
       <Conversations />
       <LogoutButton />
     </div>

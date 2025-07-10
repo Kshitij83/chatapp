@@ -83,25 +83,28 @@ const MessageInput = () => {
   };
 
   return (
-    <form className="px-4 my-3" onSubmit={handleSubmit}>
-      {/* Image preview before sending */}
+    <form className="px-4 py-4" style={{ backgroundColor: '#393E46', borderTop: '2px solid #00ADB5' }} onSubmit={handleSubmit}>
+      {/* Image preview */}
       {imagePreview && (
-        <div className="flex items-center mb-2">
+        <div className="flex items-center mb-4 p-3 rounded-lg" style={{ backgroundColor: '#222831' }}>
           <img
             src={imagePreview}
             alt="Preview"
-            className="max-w-[120px] max-h-[120px] rounded-lg border mr-4"
+            className="max-w-[120px] max-h-[120px] rounded-lg mr-4"
+            style={{ border: '2px solid #00ADB5' }}
           />
           <button
             type="button"
-            className="bg-blue-500 text-white px-4 py-2 rounded mr-2"
+            className="px-4 py-2 rounded-lg mr-2 font-semibold"
+            style={{ backgroundColor: '#00ADB5', color: '#222831' }}
             onClick={sendImage}
           >
             Send Image
           </button>
           <button
             type="button"
-            className="bg-red-500 text-white px-4 py-2 rounded"
+            className="px-4 py-2 rounded-lg font-semibold"
+            style={{ backgroundColor: '#dc2626', color: '#EEEEEE' }}
             onClick={() => {
               setImagePreview(null);
               setImageFile(null);
@@ -111,28 +114,40 @@ const MessageInput = () => {
           </button>
         </div>
       )}
-      <div className="w-full relative flex items-center gap-2">
+      <div className="w-full relative flex items-center gap-3">
         <input
           type="text"
-          className="border text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 text-white"
-          placeholder="Send a message"
+          className="text-sm rounded-lg block w-full p-3"
+          style={{ 
+            backgroundColor: '#222831', 
+            borderColor: '#00ADB5', 
+            border: '2px solid #00ADB5',
+            color: '#EEEEEE'
+          }}
+          placeholder="Type your message..."
           value={message}
           onChange={(e) => setMessage(e.target.value)}
         />
-        {/* Audio message button (hold to record) */}
         <button
           type="button"
-          className="ml-2"
+          className="p-3 rounded-full transition-colors"
+          style={{ backgroundColor: recording ? "#dc2626" : "transparent" }}
           onMouseDown={handleMicMouseDown}
           onMouseUp={handleMicMouseUp}
           onMouseLeave={handleMicMouseUp}
           title={recording ? "Recording... Release to send" : "Hold to record audio"}
-          style={{ background: recording ? "#fee2e2" : "transparent", borderRadius: "50%" }}
+          onMouseEnter={(e) => {
+            if (!recording) e.target.style.backgroundColor = '#222831';
+          }}
+          onMouseLeave={(e) => {
+            if (!recording) e.target.style.backgroundColor = 'transparent';
+          }}
         >
-          <FaMicrophone color={recording ? "red" : "white"} />
+          <FaMicrophone color={recording ? "#EEEEEE" : "#00ADB5"} size={20} />
         </button>
-        {/* Attachment button */}
-        <label className="ml-2 cursor-pointer" title="Send Image">
+        <label className="p-3 rounded-full transition-colors cursor-pointer" title="Send Image"
+               onMouseEnter={(e) => e.target.style.backgroundColor = '#222831'}
+               onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}>
           <input
             type="file"
             accept="image/*"
@@ -140,13 +155,13 @@ const MessageInput = () => {
             ref={fileInputRef}
             onChange={handleAttachmentUpload}
           />
-          <FaPaperclip color="white" />
+          <FaPaperclip color="#00ADB5" size={20} />
         </label>
-        <button type="submit" className="ml-2">
+        <button type="submit" className="p-3 rounded-full transition-colors" style={{ backgroundColor: '#00ADB5' }}>
           {loading ? (
-            <div className="loading loading-spinner"></div>
+            <div className="loading loading-spinner w-5 h-5"></div>
           ) : (
-            <BsSend />
+            <BsSend color="#222831" size={20} />
           )}
         </button>
       </div>
