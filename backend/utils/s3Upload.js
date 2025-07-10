@@ -30,7 +30,6 @@ export const uploadAudioToS3 = async (base64Audio, fileName) => {
       Key: `audio/${Date.now()}_${fileName}`,
       Body: buffer,
       ContentType: 'audio/webm',
-      ACL: 'public-read',
       CacheControl: 'max-age=31536000',
       Metadata: {
         'original-name': fileName,
@@ -70,7 +69,6 @@ export const uploadImageToS3 = async (imageBuffer, fileName, contentType) => {
       Key: `images/${Date.now()}_${fileName}`,
       Body: imageBuffer,
       ContentType: contentType,
-      ACL: 'public-read',
       CacheControl: 'max-age=31536000',
       Metadata: {
         'original-name': fileName,
@@ -98,24 +96,6 @@ export const uploadImageToS3 = async (imageBuffer, fileName, contentType) => {
 export const deleteFromS3 = async (fileUrl) => {
   try {
     if (!fileUrl.includes('amazonaws.com')) {
-      throw new Error('Not an S3 URL');
-    }
-    
-    const url = new URL(fileUrl);
-    const key = url.pathname.substring(1); // Remove leading '/'
-    
-    const params = {
-      Bucket: process.env.AWS_S3_BUCKET,
-      Key: key
-    };
-    
-    await s3.deleteObject(params).promise();
-    console.log('S3 file deleted successfully:', key);
-  } catch (error) {
-    console.error('S3 deletion error:', error);
-    throw new Error('Failed to delete from S3: ' + error.message);
-  }
-};
       throw new Error('Not an S3 URL');
     }
     
