@@ -31,13 +31,18 @@ export const SocketContextProvider = ({ children }) => {
       setSocket(socketInstance);
 
       socketInstance.on("getOnlineUsers", (users) => {
-        setOnlineUsers(users);
+        // Ensure users is always an array of strings
+        setOnlineUsers(Array.isArray(users) ? users : []);
+        console.log("Online users:", users);
       });
 
-      return () => socketInstance.close();
+      return () => {
+        socketInstance.disconnect();
+        setSocket(null);
+      };
     } else {
       if (socket) {
-        socket.close();
+        socket.disconnect();
         setSocket(null);
       }
     }
