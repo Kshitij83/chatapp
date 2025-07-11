@@ -8,6 +8,12 @@ export const useSocketContext = () => {
   return useContext(SocketContext);
 };
 
+const BACKEND_URL =
+  import.meta.env.VITE_SOCKET_URL ||
+  (window.location.hostname === "localhost"
+    ? "http://localhost:5000"
+    : "https://chatapp-backend-40b2.onrender.com");
+
 export const SocketContextProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
   const [onlineUsers, setOnlineUsers] = useState([]);
@@ -15,26 +21,29 @@ export const SocketContextProvider = ({ children }) => {
 
   useEffect(() => {
     if (authUser) {
-      const socket = io("https://justchatting-sdt6.onrender.com/", {
+      const socketInstance = io(BACKEND_URL, {
         query: {
           userId: authUser._id,
         },
+        withCredentials: true,
       });
 
-      setSocket(socket);
+      setSocket(socketInstance);
 
-      socket.on("getOnlineUsers", (users) => {
+      socketInstance.on("getOnlineUsers", (users) => {
         setOnlineUsers(users);
       });
 
-      return () => socket.close();
+      return () => socketInstance.close();
     } else {
       if (socket) {
         socket.close();
         setSocket(null);
       }
     }
+    // eslint-disable-next-line
   }, [authUser]);
+
   return (
     <SocketContext.Provider value={{ socket, onlineUsers }}>
       {children}

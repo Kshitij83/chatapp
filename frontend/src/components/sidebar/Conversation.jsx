@@ -52,6 +52,9 @@ const Conversation = ({ conversation, lastIdx, emoji }) => {
             <span className="text-lg flex-shrink-0">{emoji}</span>
           </div>
         </div>
+        {isOnline && (
+          <span className="absolute bottom-0 right-0 w-2 h-2 sm:w-3 sm:h-3 bg-green-500 rounded-full border-2 border-[#222831]" />
+        )}
       </div>
       {!lastIdx && (
         <div
