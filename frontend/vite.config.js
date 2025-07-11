@@ -8,8 +8,30 @@ export default defineConfig({
     port: 3000,
     proxy: {
       "/api": {
-        target: "http://localhost:5000",
+        target: process.env.VITE_API_URL || "http://localhost:5000",
+        changeOrigin: true,
       },
     },
   },
+  build: {
+    outDir: 'dist',
+    sourcemap: false,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+          router: ['react-router-dom'],
+          icons: ['react-icons'],
+          socket: ['socket.io-client']
+        }
+      }
+    }
+  },
+  define: {
+    'import.meta.env.VITE_API_URL': JSON.stringify(
+      process.env.NODE_ENV === 'production' 
+        ? process.env.VITE_API_URL || 'https://chatapp-backend.onrender.com'
+        : 'http://localhost:5000'
+    )
+  }
 });

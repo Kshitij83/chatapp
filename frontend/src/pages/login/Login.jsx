@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import useLogin from "../../hooks/useLogin";
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const { loading, login } = useLogin();
 
@@ -14,44 +16,67 @@ const Login = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-w-96 mx-auto">
-      <div className="w-full p-6 rounded-lg shadow-md bg-gray-400 bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10">
-        <h1 className="text-3xl font-semibold text-center text-gray-300">
-          Login
-          <span className="text-indigo-200 font-bold"> JustChatting</span>
+    <div className="standard-window flex flex-col items-center justify-center chat-window-bg rounded-2xl shadow-2xl">
+      <div className="w-full max-w-md p-8 mx-4">
+        <h1 className="text-4xl font-bold text-center mb-8" style={{ color: '#EEEEEE' }}>
+          Login to
+          <span style={{ color: '#00ADB5' }} className="ml-2">JustChatting</span>
         </h1>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="label p-2">
-              <span className="text-base label-text">Username</span>
+            <label className="block text-sm font-medium mb-2" style={{ color: '#00ADB5' }}>
+              Username
             </label>
             <input
               type="text"
               placeholder="Enter username"
-              className="w-full input input-bordered h-10"
+              className="w-full input h-12"
+              style={{ 
+                backgroundColor: '#393E46', 
+                borderColor: '#00ADB5', 
+                color: '#EEEEEE'
+              }}
+              value={username}
               onChange={(e) => setUsername(e.target.value)}
             />
           </div>
           <div>
-            <label className="label">
-              <span className="text-base label-text">Password</span>
+            <label className="block text-sm font-medium mb-2" style={{ color: '#00ADB5' }}>
+              Password
             </label>
-            <input
-              type="password"
-              placeholder="Enter Password"
-              className="w-full input input-bordered h-10"
-              onChange={(e) => setPassword(e.target.value)}
-            />
+            <div className="password-input-container">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Enter Password"
+                className="w-full input h-12 pr-12"
+                style={{ 
+                  backgroundColor: '#393E46', 
+                  borderColor: '#00ADB5', 
+                  color: '#EEEEEE'
+                }}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <button
+                type="button"
+                className="password-toggle"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
+              </button>
+            </div>
           </div>
           <Link
             to="/signup"
-            className="text-sm hover:underline hover:text-blue-600 mt-2 inline-block"
+            className="text-sm hover:underline mt-4 inline-block"
+            style={{ color: '#00ADB5' }}
           >
-            {"Don't"} have an account?
+            Don't have an account?
           </Link>
-
           <div>
-            <button className="btn btn-block btn-sm mt-2" disabled={loading}>{loading ? <span className="loading loading-spinner"></span> : "Login"}</button>
+            <button className="btn w-full font-semibold border-none h-12 btn-animated" style={{ backgroundColor: '#00ADB5', color: '#222831' }} disabled={loading}>
+              {loading ? <span className="loading loading-spinner"></span> : "Login"}
+            </button>
           </div>
         </form>
       </div>

@@ -3,10 +3,11 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { useAuthContext } from "../context/AuthContext";
 
+const API_URL = import.meta.env.VITE_API_URL;
 
 const useSignup = () => {
   const [loading, setLoading] = useState(false);
-  const {setAuthUser} = useAuthContext()
+  const { setAuthUser } = useAuthContext();
   const signup = async ({
     fullName,
     username,
@@ -25,9 +26,10 @@ const useSignup = () => {
 
     setLoading(true);
     try {
-      const res = await fetch("/api/auth/signup", {
+      const res = await fetch(`${API_URL}/api/auth/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({
           fullName,
           username,
@@ -36,14 +38,16 @@ const useSignup = () => {
           gender,
         }),
       });
-
-      const data = await res.json();
-      if(data.error){
-        throw new Error(data.error)
+      let data;
+      try {
+        data = await res.json();
+      } catch {
+        throw new Error("Invalid server response");
       }
+      if (data.error) throw new Error(data.error);
 
-      localStorage.setItem("chat-user",JSON.stringify(data))
-      setAuthUser(data)
+      localStorage.setItem("chat-user", JSON.stringify(data));
+      setAuthUser(data);
 
       console.log(data);
     } catch (error) {

@@ -2,11 +2,93 @@
 @tailwind components;
 @tailwind utilities;
 
-body{
-  background: linear-gradient(rgba(0,0,0,0.2),rgba(0,0,0,0.2)), url("/bg.png");
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
+body {
+  background: #393E46;
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Animated background particles */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 20% 50%, rgba(0, 173, 181, 0.1) 0%, transparent 50%),
+              radial-gradient(circle at 80% 20%, rgba(0, 173, 181, 0.15) 0%, transparent 50%),
+              radial-gradient(circle at 40% 80%, rgba(0, 173, 181, 0.1) 0%, transparent 50%);
+  animation: backgroundShift 20s ease-in-out infinite alternate;
+  pointer-events: none;
+  z-index: -2;
+}
+
+@keyframes backgroundShift {
+  0% {
+    transform: translateX(-10px) translateY(-10px);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateX(10px) translateY(10px);
+    opacity: 1;
+  }
+}
+
+/* Snowdrop animation - Updated colors */
+.snowdrop {
+  position: fixed;
+  top: -10px;
+  color: rgba(0, 173, 181, 0.6);
+  user-select: none;
+  pointer-events: none;
+  z-index: -1;
+  animation: snowfall linear infinite;
+}
+
+@keyframes snowfall {
+  0% {
+    transform: translateY(-100vh) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* Chat window animated background - Updated colors */
+.chat-window-bg {
+  background: #222831;
+  backdrop-filter: blur(10px);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  position: relative;
+  z-index: 10;
+}
+
+.chat-window-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 2px;
+  background: linear-gradient(45deg, #00ADB5, #00ADB5, #00ADB5, #00ADB5);
+  border-radius: inherit;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  animation: borderGlow 3s ease-in-out infinite alternate;
+  z-index: -1;
+}
+
+@keyframes borderGlow {
+  0% {
+    background: linear-gradient(45deg, #00ADB5, #00ADB5, #00ADB5, #00ADB5);
+  }
+  100% {
+    background: linear-gradient(45deg, #00ADB5, #00ADB5, #00ADB5, #00ADB5);
+  }
 }
 
 .shake {
@@ -17,35 +99,132 @@ body{
 }
 
 @keyframes shake {
-	10%,
-	90% {
-		transform: translate3d(-1px, 0, 0);
-	}
+	10%, 90% { transform: translate3d(-1px, 0, 0); }
+	20%, 80% { transform: translate3d(2px, 0, 0); }
+	30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+	40%, 60% { transform: translate3d(4px, 0, 0); }
+}
 
-	20%,
-	80% {
-		transform: translate3d(2px, 0, 0);
-	}
+/* Custom scrollbar - Updated colors */
+::-webkit-scrollbar {
+  width: 8px;
+}
 
-	30%,
-	50%,
-	70% {
-		transform: translate3d(-4px, 0, 0);
-	}
+::-webkit-scrollbar-track {
+  background: #393E46;
+}
 
-	40%,
-	60% {
-		transform: translate3d(4px, 0, 0);
-	}
+::-webkit-scrollbar-thumb {
+  background: #00ADB5;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #00ADB5;
+}
+
+/* Standardized window sizes - Increased profile width */
+.standard-window {
+  width: 100%;
+  max-width: 90rem;
+  height: 500px;
+  position: relative;
+  z-index: 20;
+}
+
+.profile-window {
+  width: 100%;
+  max-width: 95rem;
+  height: 500px;
+  position: relative;
+  z-index: 20;
+}
+
+@media (min-width: 768px) {
+  .standard-window {
+    height: 550px;
+  }
+  .profile-window {
+    height: 550px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .standard-window {
+    height: 600px;
+  }
+  .profile-window {
+    height: 600px;
+  }
+}
+
+/* Password input container - Updated colors */
+.password-input-container {
+  position: relative;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #00ADB5;
+  transition: color 0.2s;
+  z-index: 10;
+}
+
+.password-toggle:hover {
+  color: #00ADB5;
+}
+
+/* Button animations */
+.btn-animated {
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  z-index: 5;
+}
+
+.btn-animated::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(238, 238, 238, 0.2), transparent);
+  transition: left 0.5s;
+  z-index: -1;
+}
+
+.btn-animated:hover::before {
+  left: 100%;
+}
+
+/* Ensure all interactive elements have proper z-index */
+button, input, select, textarea, a {
+  position: relative;
+  z-index: 5;
+}
+
+/* Modal overlay fix */
+.modal-overlay {
+  z-index: 50;
 }
 
 @media (max-width: 768px) {
-  body {
-    background-size: auto 100%;
-    background-position: top;
-  }
-
   .shake {
-    animation-duration: 0.5s; /* Shorter shake duration on small screens */
+    animation-duration: 0.5s;
+  }
+  
+  .standard-window {
+    height: 450px;
+    max-width: 95vw;
+  }
+  
+  .profile-window {
+    height: 450px;
+    max-width: 95vw;
   }
 }
