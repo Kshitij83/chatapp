@@ -20,8 +20,9 @@ const useGetMessages = () => {
           }
         );
         const data = await res.json();
+        console.log("Fetched messages data:", data);
         if (data.error) throw new Error(data.error);
-        setMessages(data);
+        setMessages(Array.isArray(data) ? data : []);
       } catch (error) {
         toast.error(error.message);
       } finally {

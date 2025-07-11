@@ -47,7 +47,3 @@ server.listen(PORT, () => {
   db();
   console.log(`Server Running on port ${PORT}`);
 });
-server.listen(PORT, () => {
-  db();
-  console.log(`Server Running on port ${PORT}`);
-});
