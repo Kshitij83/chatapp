@@ -1,4 +1,3 @@
-import React from "react";
 import { useSocketContext } from "../context/SocketContext";
 import useConversation from "../zustand/useConversation";
 import { useEffect } from "react";
@@ -7,26 +6,34 @@ import { useAuthContext } from "../context/AuthContext";
 
 const useListenMessages = () => {
   const { socket } = useSocketContext();
-  const { setMessages } = useConversation();
+  const { setMessages, selectedConversation } = useConversation();
   const { authUser } = useAuthContext();
 
   useEffect(() => {
     if (!socket) return;
     const handler = (newMessage) => {
-      // Only shake and play sound if the message is NOT sent by the current user
-      if (newMessage.senderId !== authUser._id) {
+      const isFromOther = newMessage.senderId !== authUser._id;
+      if (isFromOther) {
         newMessage.shouldShake = true;
-        const sound = new Audio(notifysound);
-        sound.play();
+        try {
+          const sound = new Audio(notifysound);
+          sound.play();
+        } catch {
+          // Audio playback blocked — ignore
+        }
       }
-      setMessages((prev) => [...prev, newMessage]);
-      console.log("Received new message:", newMessage);
+      const isForOpenChat =
+        selectedConversation?._id === newMessage.senderId ||
+        newMessage.senderId === authUser._id;
+      if (isForOpenChat) {
+        setMessages((prev) => [...prev, newMessage]);
+      }
     };
 
     socket.on("newMessage", handler);
 
     return () => socket.off("newMessage", handler);
-  }, [socket, setMessages, authUser]);
+  }, [socket, setMessages, authUser, selectedConversation]);
 };
 
 export default useListenMessages;

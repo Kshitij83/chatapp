@@ -21,7 +21,7 @@ A real-time chat application with authentication, text, image and audio sharing,
 - **Real-time:** Socket.io
 - **Authentication:** JWT, Cookies
 - **File Storage:** AWS S3
-- **Deployment:** Render.com
+- **Deployment:** Vercel
 
 ---
 
@@ -86,21 +86,36 @@ npm run dev
 
 ---
 
-## 🌐 Deployment (Render)
+## 🌐 Deployment (Vercel)
 
-### 1. Deploy Backend
-- Create a new Web Service on Render
-- Connect your repo, set root to `backend/`
-- Add environment variables from your local `.env`
-- Set build command: `npm install`
-- Set start command: `node server.js`
+The app is deployed as a single Vercel project (static frontend + one Node.js
+serverless function that runs the Express + Socket.io backend).
 
-### 2. Deploy Frontend
-- Create a new Static Site on Render
-- Set root to `frontend/`
-- Set build command: `npm install && npm run build`
-- Set publish directory: `frontend/dist`
-- Set `VITE_API_URL` to your backend Render URL
+### 1. Configure environment variables (Production)
+| Variable | Value |
+| --- | --- |
+| `MONGO_DB_URI` | Your MongoDB connection string |
+| `JWT_SECRET` | Secret used to sign auth tokens |
+| `FRONTEND_URL` | Optional: frontend origin for CORS |
+
+```
+vercel env add MONGO_DB_URI production
+vercel env add JWT_SECRET production
+```
+
+### 2. Deploy
+```
+vercel --prod --yes
+```
+
+- `vercel.json` sets the build command and rewrites `/api/*` (including
+  `/api/socket.io` WebSocket upgrades) to the `api/server.js` function, with an
+  SPA fallback for the React router.
+- The Socket.io client connects with `transports: ["websocket"]` and the
+  `/api/socket.io` path (required on serverless — long-polling needs sticky
+  sessions).
+- Note: online-user presence and typing state live in function memory, so they
+  are per-instance in serverless deployments.
 
 ---
 

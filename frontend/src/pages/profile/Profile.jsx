@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useAuthContext } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { FaArrowLeft } from "react-icons/fa";
+import { FaArrowLeft, FaUserEdit, FaTrashAlt } from "react-icons/fa";
 import toast from "react-hot-toast";
 
 const Profile = () => {
@@ -13,7 +13,6 @@ const Profile = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Update name and username handler
   const handleSave = async () => {
     setLoading(true);
     try {
@@ -24,7 +23,11 @@ const Profile = () => {
       });
       const data = await res.json();
       if (data.error) throw new Error(data.error);
-      setAuthUser({ ...authUser, fullName: data.fullName, username: data.username });
+      setAuthUser({
+        ...authUser,
+        fullName: data.fullName,
+        username: data.username,
+      });
       localStorage.setItem(
         "chat-user",
         JSON.stringify({ ...authUser, fullName: data.fullName, username: data.username })
@@ -38,7 +41,6 @@ const Profile = () => {
     }
   };
 
-  // Delete account handler
   const handleDelete = async () => {
     setLoading(true);
     try {
@@ -61,106 +63,90 @@ const Profile = () => {
   };
 
   return (
-    <div className="profile-window rounded-2xl chat-window-bg shadow-2xl p-8 flex flex-col">
-      {/* Header with Go Back Button and Profile Title */}
-      <div className="flex items-center justify-between mb-10">
-        <div className="flex items-center gap-6">
-          <button
-            className="flex items-center gap-3 px-6 py-3 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors btn-animated"
-            onClick={() => navigate("/")}
-            style={{ color: '#EEEEEE', borderColor: '#00ADB5' }}
-          >
-            <FaArrowLeft size={18} />
-            <span className="text-lg font-medium">Back to Chat</span>
+    <div className="h-full flex items-center justify-center">
+      <div className="w-full max-w-3xl card-glass p-6 sm:p-10 flex flex-col animate-fade-up max-h-full overflow-y-auto">
+        {/* Header */}
+        <div className="flex items-center gap-4 mb-8">
+          <button onClick={() => navigate("/")} className="theme-btn" title="Back to chat">
+            <FaArrowLeft size={16} />
           </button>
-          <h1 className="text-4xl font-bold" style={{ color: '#EEEEEE' }}>
-            My Profile
-          </h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-ink">My Profile</h1>
         </div>
-      </div>
 
-      {/* Profile Content - Wider Layout */}
-      <div className="flex-1 flex items-center justify-center">
-        <div className="w-full max-w-4xl grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-          {/* Profile Image Section */}
-          <div className="flex justify-center">
+        <div className="flex flex-col sm:flex-row gap-8 items-center sm:items-start">
+          {/* Avatar */}
+          <div className="flex flex-col items-center gap-4 shrink-0">
             <img
               src={authUser.profilePic}
               alt="profile"
-              className="w-40 h-40 lg:w-48 lg:h-48 rounded-full shadow-lg"
-              style={{ border: '4px solid #00ADB5' }}
+              className="w-36 h-36 lg:w-44 lg:h-44 rounded-full object-cover ring-4 ring-primary shadow-xl"
             />
+            <span className="text-sm text-ink-muted">@{authUser.username}</span>
           </div>
-          
-          {/* Profile Information Section */}
-          <div className="space-y-6">
+
+          {/* Info */}
+          <div className="flex-1 w-full space-y-5">
             {editMode ? (
               <>
                 <div>
-                  <label className="block text-sm font-medium mb-3" style={{ color: '#00ADB5' }}>
-                    Full Name:
+                  <label className="block text-sm font-medium mb-1.5 text-ink-muted">
+                    Full Name
                   </label>
                   <input
-                    className="input w-full h-14 text-lg rounded-lg"
-                    style={{ 
-                      backgroundColor: '#393E46', 
-                      borderColor: '#00ADB5', 
-                      color: '#EEEEEE' 
-                    }}
+                    className="input-modern w-full"
                     value={fullName}
-                    onChange={e => setFullName(e.target.value)}
+                    onChange={(e) => setFullName(e.target.value)}
                     disabled={loading}
                     placeholder="Enter your full name"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-3" style={{ color: '#00ADB5' }}>
-                    Username:
+                  <label className="block text-sm font-medium mb-1.5 text-ink-muted">
+                    Username
                   </label>
                   <input
-                    className="input w-full h-14 text-lg rounded-lg"
-                    style={{ 
-                      backgroundColor: '#393E46', 
-                      borderColor: '#00ADB5', 
-                      color: '#EEEEEE' 
-                    }}
+                    className="input-modern w-full"
                     value={username}
-                    onChange={e => setUsername(e.target.value)}
+                    onChange={(e) => setUsername(e.target.value)}
                     disabled={loading}
                     placeholder="Enter your username"
                   />
                 </div>
               </>
             ) : (
-              <>
-                <div className="space-y-4">
-                  <div className="p-6 rounded-lg" style={{ backgroundColor: '#393E46' }}>
-                    <p className="text-sm font-medium mb-2" style={{ color: '#00ADB5' }}>Full Name</p>
-                    <p className="text-2xl font-semibold" style={{ color: '#EEEEEE' }}>{authUser.fullName}</p>
-                  </div>
-                  <div className="p-6 rounded-lg" style={{ backgroundColor: '#393E46' }}>
-                    <p className="text-sm font-medium mb-2" style={{ color: '#00ADB5' }}>Username</p>
-                    <p className="text-2xl font-semibold" style={{ color: '#EEEEEE' }}>@{authUser.username}</p>
-                  </div>
+              <div className="space-y-4">
+                <div className="rounded-xl bg-surface-2 border border-[var(--border)] p-5">
+                  <p className="text-xs uppercase tracking-wide font-semibold text-ink-muted mb-1">
+                    Full Name
+                  </p>
+                  <p className="text-xl font-semibold text-ink">{authUser.fullName}</p>
                 </div>
-              </>
+                <div className="rounded-xl bg-surface-2 border border-[var(--border)] p-5">
+                  <p className="text-xs uppercase tracking-wide font-semibold text-ink-muted mb-1">
+                    Username
+                  </p>
+                  <p className="text-xl font-semibold text-ink">@{authUser.username}</p>
+                </div>
+              </div>
             )}
 
-            {/* Action Buttons */}
-            <div className="flex gap-4 pt-6">
+            {/* Actions */}
+            <div className="flex flex-wrap gap-3 pt-2">
               {editMode ? (
                 <>
-                  <button 
-                    className="btn border-none btn-animated flex-1 h-14 text-lg font-semibold rounded-lg"
-                    style={{ backgroundColor: '#00ADB5', color: '#222831' }}
-                    onClick={handleSave} 
+                  <button
+                    className="btn-primary flex-1 min-w-[8rem]"
+                    onClick={handleSave}
                     disabled={loading}
                   >
-                    {loading ? <span className="loading loading-spinner"></span> : "Save Changes"}
+                    {loading ? (
+                      <span className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      "Save Changes"
+                    )}
                   </button>
                   <button
-                    className="btn border-none btn-animated flex-1 h-14 text-lg font-semibold rounded-lg"
-                    style={{ backgroundColor: '#393E46', color: '#EEEEEE' }}
+                    className="btn-ghost flex-1 min-w-[8rem]"
                     onClick={() => {
                       setEditMode(false);
                       setFullName(authUser.fullName);
@@ -173,18 +159,12 @@ const Profile = () => {
                 </>
               ) : (
                 <>
-                  <button 
-                    className="btn border-none btn-animated flex-1 h-14 text-lg font-semibold rounded-lg"
-                    style={{ backgroundColor: '#00ADB5', color: '#222831' }}
-                    onClick={() => setEditMode(true)}
-                  >
+                  <button className="btn-primary flex-1 min-w-[8rem]" onClick={() => setEditMode(true)}>
+                    <FaUserEdit size={16} />
                     Edit Profile
                   </button>
-                  <button 
-                    className="btn border-none btn-animated flex-1 h-14 text-lg font-semibold rounded-lg"
-                    style={{ backgroundColor: '#dc2626', color: '#EEEEEE' }}
-                    onClick={() => setShowModal(true)}
-                  >
+                  <button className="btn-danger flex-1 min-w-[8rem]" onClick={() => setShowModal(true)}>
+                    <FaTrashAlt size={15} />
                     Delete Account
                   </button>
                 </>
@@ -196,28 +176,32 @@ const Profile = () => {
 
       {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 flex items-center justify-center modal-overlay" 
-             style={{ backgroundColor: 'rgba(34, 40, 49, 0.8)', zIndex: 100 }}>
-          <div className="rounded-xl p-8 flex flex-col items-center max-w-md w-full mx-4" 
-               style={{ backgroundColor: '#222831', border: '2px solid #00ADB5', zIndex: 101 }}>
-            <div className="text-6xl mb-4">⚠️</div>
-            <h3 className="text-xl font-bold mb-2" style={{ color: '#EEEEEE' }}>Delete Account</h3>
-            <p className="text-center mb-6" style={{ color: '#EEEEEE' }}>
-              This action cannot be undone. All your messages and data will be permanently deleted.
+        <div
+          className="fixed inset-0 flex items-center justify-center modal-overlay bg-black/60 backdrop-blur-sm"
+          style={{ zIndex: 100 }}
+        >
+          <div className="rounded-2xl p-8 flex flex-col items-center max-w-md w-full mx-4 card-glass animate-fade-up">
+            <div className="text-5xl mb-4">⚠️</div>
+            <h3 className="text-xl font-bold text-ink mb-2">Delete Account</h3>
+            <p className="text-center text-ink-muted mb-6">
+              This action cannot be undone. All your messages and data will be
+              permanently deleted.
             </p>
             <div className="flex gap-4 w-full">
-              <button 
-                className="btn border-none btn-animated flex-1 font-semibold rounded-lg"
-                style={{ backgroundColor: '#dc2626', color: '#EEEEEE' }}
-                onClick={handleDelete} 
+              <button
+                className="btn-danger flex-1"
+                onClick={handleDelete}
                 disabled={loading}
               >
-                {loading ? <span className="loading loading-spinner"></span> : "Yes, Delete"}
+                {loading ? (
+                  <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  "Yes, Delete"
+                )}
               </button>
-              <button 
-                className="btn border-none btn-animated flex-1 font-semibold rounded-lg"
-                style={{ backgroundColor: '#393E46', color: '#EEEEEE' }}
-                onClick={() => setShowModal(false)} 
+              <button
+                className="btn-ghost flex-1"
+                onClick={() => setShowModal(false)}
                 disabled={loading}
               >
                 Cancel

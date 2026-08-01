@@ -1,4 +1,46 @@
 import User from "../models/user.model.js";
+import Conversation from "../models/conversation.model.js";
+
+export const getConversationsForSidebar = async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    const users = await User.find({ _id: { $ne: userId } }).select("-password");
+
+    const conversations = await Promise.all(
+      users.map(async (user) => {
+        const conversation = await Conversation.findOne({
+          participants: { $all: [userId, user._id] },
+        }).populate("messages");
+
+        const messages = conversation?.messages || [];
+        const lastMessage = messages.length
+          ? messages[messages.length - 1]
+          : null;
+
+        return {
+          _id: user._id,
+          fullName: user.fullName,
+          username: user.username,
+          profilePic: user.profilePic,
+          lastMessage: lastMessage
+            ? {
+                text: lastMessage.message,
+                messageType: lastMessage.messageType,
+                timestamp: lastMessage.createdAt || lastMessage.timestamp,
+                senderId: lastMessage.senderId,
+              }
+            : null,
+        };
+      })
+    );
+
+    res.status(200).json(conversations);
+  } catch (error) {
+    console.log("Error in getConversationsForSidebar: ", error.message);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
 
 export const getUsersForSideBar = async (req, res) => {
   try {

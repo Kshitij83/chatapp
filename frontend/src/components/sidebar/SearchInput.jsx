@@ -1,4 +1,3 @@
-import React from "react";
 import { IoSearchSharp } from "react-icons/io5";
 import { useState } from "react";
 import useConversation from "../../zustand/useConversation";
@@ -28,23 +27,18 @@ const SearchInput = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex items-center gap-2 mb-4">
+    <form onSubmit={handleSubmit} className="relative">
+      <IoSearchSharp
+        size={16}
+        className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-muted"
+      />
       <input
         type="text"
-        placeholder="Search..."
-        className="input rounded-lg flex-1 text-sm"
-        style={{ 
-          backgroundColor: '#222831', 
-          borderColor: '#00ADB5', 
-          color: '#EEEEEE',
-          '--placeholder-color': '#EEEEEE'
-        }}
+        placeholder="Search people..."
+        className="input-modern w-full pl-9 text-sm"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       />
-      <button type="submit" className="btn btn-circle btn-sm border-none" style={{ backgroundColor: '#00ADB5', color: '#222831' }}>
-        <IoSearchSharp className="w-5 h-5" />
-      </button>
     </form>
   );
 };

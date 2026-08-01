@@ -8,11 +8,7 @@ export const useSocketContext = () => {
   return useContext(SocketContext);
 };
 
-const BACKEND_URL =
-  import.meta.env.VITE_SOCKET_URL ||
-  (window.location.hostname === "localhost"
-    ? "http://localhost:5000"
-    : "https://chatapp-backend-40b2.onrender.com");
+const BACKEND_URL = import.meta.env.VITE_SOCKET_URL || "";
 
 export const SocketContextProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
@@ -26,14 +22,14 @@ export const SocketContextProvider = ({ children }) => {
           userId: authUser._id,
         },
         withCredentials: true,
+        transports: ["websocket"],
+        path: "/api/socket.io",
       });
 
       setSocket(socketInstance);
 
       socketInstance.on("getOnlineUsers", (users) => {
-        // Ensure users is always an array of strings
         setOnlineUsers(Array.isArray(users) ? users : []);
-        console.log("Online users:", users);
       });
 
       return () => {

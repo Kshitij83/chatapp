@@ -1,41 +1,56 @@
-import React from "react";
 import Message from "./Message";
 import useGetMessages from "../../hooks/useGetMessages";
 import MessageSkeleton from "../skeletons/MessageSkeleton";
 import { useEffect, useRef } from "react";
 import useListenMessages from "../../hooks/useListenMessages";
 
-const Messages = () => {
+const Messages = ({ isTyping }) => {
   const { messages, loading } = useGetMessages();
-  console.log("Messages component loaded with messages:", messages);
   useListenMessages();
-  const lastMessageRef = useRef();
+  const bottomRef = useRef();
 
   useEffect(() => {
     setTimeout(() => {
-      lastMessageRef.current?.scrollIntoView({ behavior: "smooth"});
-    },100);
-  }, [messages]);
+      bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, 100);
+  }, [messages, isTyping]);
 
   return (
-    <div className="px-4 flex-1 overflow-auto">
-      {!loading && Array.isArray(messages) && messages.length > 0 &&
-        messages.map((message) => (
-          <div key={message._id} ref={lastMessageRef}>
-            <Message message={message} />
+    <div className="flex-1 overflow-y-auto px-4 py-4 relative chat-wallpaper">
+      <div className="max-w-4xl mx-auto flex flex-col gap-2.5">
+        {!loading &&
+          Array.isArray(messages) &&
+          messages.map((message) => (
+            <Message key={message._id} message={message} />
+          ))}
+
+        {loading &&
+          [...Array(3)].map((_, idx) => <MessageSkeleton key={idx} />)}
+
+        {!loading && Array.isArray(messages) && messages.length === 0 && (
+          <p className="text-center text-sm text-ink-muted py-8">
+            No messages yet — say hi to start the conversation 👋
+          </p>
+        )}
+
+        {!loading && !Array.isArray(messages) && (
+          <p className="text-center text-sm text-danger py-8">
+            Something went wrong loading messages.
+          </p>
+        )}
+
+        {isTyping && (
+          <div className="flex items-end gap-2.5">
+            <div className="typing-indicator">
+              <span />
+              <span />
+              <span />
+            </div>
           </div>
-        ))}
+        )}
 
-      {loading && [...Array(3)].map((_, idx) => <MessageSkeleton key={idx} />)}
-
-      {!loading && Array.isArray(messages) && messages.length === 0 && (
-        <p className="text-center">Send a message to start the conversation</p>
-      )}
-
-      {/* Defensive: if messages is not an array, show error */}
-      {!loading && !Array.isArray(messages) && (
-        <p className="text-center text-red-500">Error: Messages data is invalid.</p>
-      )}
+        <div ref={bottomRef} />
+      </div>
     </div>
   );
 };

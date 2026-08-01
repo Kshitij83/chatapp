@@ -1,8 +1,7 @@
-import React from "react";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL || "";
 
 const useGetConversations = () => {
   const [loading, setLoading] = useState(false);
@@ -12,7 +11,7 @@ const useGetConversations = () => {
     const getConversations = async () => {
       setLoading(true);
       try {
-        const res = await fetch(`${API_URL}/api/users`, {
+        const res = await fetch(`${API_URL}/api/users/conversations`, {
           credentials: "include",
         });
         let data;

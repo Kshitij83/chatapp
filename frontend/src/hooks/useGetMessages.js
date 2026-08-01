@@ -1,9 +1,8 @@
-import React from "react";
 import useConversation from "../zustand/useConversation";
 import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL || "";
 
 const useGetMessages = () => {
   const [loading, setLoading] = useState(false);

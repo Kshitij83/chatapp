@@ -1,4 +1,3 @@
-import React from "react";
 import { BiLogOut } from "react-icons/bi";
 import useLogout from "../../hooks/useLogout";
 
@@ -6,23 +5,18 @@ const LogoutButton = () => {
   const { loading, logout } = useLogout();
 
   return (
-    <div className="mt-auto">
-      {!loading ? (
-        <BiLogOut
-          className="w-6 h-6 cursor-pointer transition-colors"
-          style={{ color: "#00ADB5" }}
-          onClick={logout}
-          onMouseEnter={(e) => {
-            e.target.style.color = "#EEEEEE";
-          }}
-          onMouseLeave={(e) => {
-            e.target.style.color = "#00ADB5";
-          }}
-        />
+    <button
+      onClick={logout}
+      disabled={loading}
+      className="icon-btn"
+      title="Logout"
+    >
+      {loading ? (
+        <span className="w-4 h-4 border-2 border-ink-muted border-t-primary rounded-full animate-spin" />
       ) : (
-        <span className="loading loading-spinner" style={{ color: "#00ADB5" }}></span>
+        <BiLogOut size={18} />
       )}
-    </div>
+    </button>
   );
 };
 

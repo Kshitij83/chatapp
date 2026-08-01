@@ -1,55 +1,50 @@
-import React from "react";
 import useConversation from "../../zustand/useConversation";
 import { useSocketContext } from "../../context/SocketContext";
+import { extractTime } from "../../utils/extractTime";
 
-const Conversation = ({ conversation, lastIdx, emoji }) => {
+const Conversation = ({ conversation, emoji }) => {
   const { selectedConversation, setSelectedConversation } = useConversation();
   const isSelected = selectedConversation?._id === conversation._id;
   const { onlineUsers } = useSocketContext();
   const isOnline = onlineUsers.includes(conversation._id);
 
+  const last = conversation.lastMessage;
+  const time = last ? extractTime(last.timestamp) : "";
+  const preview = last
+    ? last.messageType === "image"
+      ? "📷 Photo"
+      : last.messageType === "audio"
+        ? "🎤 Voice message"
+        : last.text
+    : "Say hello 👋";
+
   return (
-    <>
-      <div
-        className="flex gap-2 items-center rounded-lg p-2 cursor-pointer transition-colors relative"
-        style={{
-          backgroundColor: isSelected ? "#00ADB5" : "#393E46",
-          color: isSelected ? "#222831" : "#EEEEEE",
-        }}
-        onClick={() => setSelectedConversation(conversation)}
-      >
-        <div className="relative">
-          <img
-            src={conversation.profilePic}
-            alt="user avatar"
-            className="w-10 h-10 rounded-full"
-            style={{ border: "3px solid #00ADB5" }}
-          />
-          {isOnline && (
-            <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-[#222831]" />
-          )}
+    <div
+      className={`conversation-row ${isSelected ? "conversation-row-active" : ""}`}
+      onClick={() => setSelectedConversation(conversation)}
+    >
+      <div className="relative shrink-0">
+        <img
+          src={conversation.profilePic}
+          alt="user avatar"
+          className="w-12 h-12 rounded-full object-cover"
+        />
+        {isOnline && <span className="online-dot" />}
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center justify-between gap-2">
+          <p className="font-medium text-ink truncate">
+            {conversation.fullName}
+          </p>
+          <span className="text-[10px] text-ink-muted shrink-0">{time}</span>
         </div>
-        <div className="flex flex-col flex-1 min-w-0">
-          <div className="flex gap-2 justify-between items-center">
-            <p
-              className="font-bold text-sm truncate"
-              style={{ color: isSelected ? "#222831" : "#EEEEEE" }}
-            >
-              {conversation.fullName}
-            </p>
-            <span className="text-lg flex-shrink-0">{emoji}</span>
-          </div>
+        <div className="flex items-center justify-between gap-2">
+          <p className="text-xs text-ink-muted truncate">{preview}</p>
+          <span className="text-sm shrink-0">{emoji}</span>
         </div>
       </div>
-      {!lastIdx && (
-        <div
-          className="divider my-1 py-0 h-px"
-          style={{ backgroundColor: "#00ADB5" }}
-        />
-      )}
-    </>
+    </div>
   );
 };
 
 export default Conversation;
-        
